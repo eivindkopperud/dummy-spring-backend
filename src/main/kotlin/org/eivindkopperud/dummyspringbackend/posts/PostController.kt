@@ -24,7 +24,7 @@ class PostController(
     fun update(
             @RequestHeader("user-id") userId: String,
             @PathVariable postId: Long,
-            @RequestBody(required = false) body: ContentProjection) {
+            @RequestBody body: ContentProjection) {
         postService.update(userId, postId, body.content)
     }
 
@@ -42,4 +42,8 @@ class PostController(
             @PathVariable postId: Long,
             @RequestBody body: ContentProjection) = commentService.create(userId, postId, body.content)
 
+    @PutMapping("/{postId}/likes")
+    fun toggleLike(
+            @RequestHeader("user-id") userId: String,
+            @PathVariable postId: Long) = postService.toggleLike(userId, postId)
 }

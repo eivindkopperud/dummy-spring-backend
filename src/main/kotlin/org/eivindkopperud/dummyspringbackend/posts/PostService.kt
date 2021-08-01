@@ -23,24 +23,29 @@ class PostService @Autowired constructor(
 
     fun update(userId: String, postId: Long, content: String) {
         val user = userRepository.findById(userId).get()
-        val postToUpdate = postRepository.findById(postId).get()
+        val post = postRepository.findById(postId).get()
 
-        if (authService.isAuthor(user, postToUpdate)) {
-            postToUpdate.content = content
-            postRepository.save(postToUpdate)
-            return
+        if (authService.isAuthor(user, post)) {
+            post.content = content
+            postRepository.save(post)
         }
-
-        postToUpdate.toggleLike(user)
-        postRepository.save(postToUpdate)
     }
 
     fun delete(userId: String, postId: Long) {
         val user = userRepository.findById(userId).get()
-        val postToDelete = postRepository.findById(postId).get()
+        val post = postRepository.findById(postId).get()
 
-        if (authService.isAuthor(user, postToDelete)) {
+        if (authService.isAuthor(user, post)) {
             postRepository.deleteById(postId)
         }
+    }
+
+    fun toggleLike(userId: String, postId: Long) {
+        val user = userRepository.findById(userId).get()
+        val post = postRepository.findById(postId).get()
+
+        if (!authService.isAuthor(user, post))
+        post.toggleLike(user)
+        postRepository.save(post)
     }
 }

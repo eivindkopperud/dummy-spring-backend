@@ -25,26 +25,32 @@ class CommentService @Autowired constructor(
         commentRepository.save(newComment)
     }
 
-    fun update(userId: String, id: Long, content: String) {
+    fun update(userId: String, commentId: Long, content: String) {
         val user = userRepository.findById(userId).get()
-        val commentToUpdate = commentRepository.findById(id).get()
+        val comment = commentRepository.findById(commentId).get()
 
-        if (authService.isAuthor(user, commentToUpdate)) {
-            commentToUpdate.content = content
-            commentRepository.save(commentToUpdate)
-            return
+        if (authService.isAuthor(user, comment)) {
+            comment.content = content
+            commentRepository.save(comment)
         }
-
-        commentToUpdate.toggleLike(user)
-        commentRepository.save(commentToUpdate)
     }
 
-    fun delete(userId: String, id: Long) {
+    fun delete(userId: String, commentId: Long) {
         val user = userRepository.findById(userId).get()
-        val commentToDelete = commentRepository.findById(id).get()
+        val comment = commentRepository.findById(commentId).get()
 
-        if (authService.isAuthor(user, commentToDelete)) {
-            commentRepository.deleteById(id)
+        if (authService.isAuthor(user, comment)) {
+            commentRepository.deleteById(commentId)
+        }
+    }
+
+    fun toggleLike(userId: String, commentId: Long) {
+        val user = userRepository.findById(userId).get()
+        val comment = commentRepository.findById(commentId).get()
+
+        if (!authService.isAuthor(user, comment)) {
+            comment.toggleLike(user)
+            commentRepository.save(comment)
         }
     }
 }

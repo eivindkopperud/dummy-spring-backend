@@ -24,6 +24,8 @@ class CommentController(val commentService: CommentService) {
         return commentService.delete(userId, id)
     }
 
-
-
+    @PutMapping("/{id}/likes")
+    fun toggleLike(
+            @RequestHeader("user-id") userId: String,
+            @PathVariable id: Long) = commentService.toggleLike(userId, id)
 }
